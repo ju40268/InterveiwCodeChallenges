@@ -1,22 +1,3 @@
-"""
-Hello Jeechee,
-
-Thanks for taking the time to interview with me! 
-I had my first round on Grace Hopper Celebration and second round with Charlie, you are actually my third interviewer.
-Already a Twilio service user, and I got to know more about the company on GHC :)
-
-As the conversation, I had previous internship experience using Spark to clean and transform the unstructured data, but not including setting up the whole data pipeline architecture.
-I think that's the part I am missing and really hope I could have a chance to join and learn how to build up the infrastructure :)!
-
-Here is the problem we discussed that day.
-I tried another different approach without using stack and anaylze the time/space complexity as follow.
-
-Thanks and have a good day,
-- Chia-Ju(Chrisite)
-
-"""
-
-
 answer = [True, False, False, True, False, False, True, False, False, True, False, False, True]
 testcases = ["(this should pass)",
    "(this should not pass",
