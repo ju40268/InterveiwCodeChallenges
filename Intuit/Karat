@@ -1,0 +1,294 @@
+需要描述time complexity, space complexity, thinking process
+基本上output的data structure要自己定义，然后在自己print出结果和例子做比较
+1. 课程
+第一题：输入学生的ID和他上的课程，找到每两个学生上的相同的课程。
+例如，输入{{"58", "A"},  {"94", "B"},  {"17", "A"},  {"58", "B"},  {"17", "B"},  {"58", "C"}}
+输出:[58, 94]: [B]
+        [58, 17]: [A, B]
+        [94, 17]: [B]
+第二题：给出一些课程和课程的先修课，每个课程有且只有一门先修课，并且保证学生只有一条path修完所有课程，求修到一半时的课程名称。
+例如，输入{{A, B}, {C, D}, {B, C}, {E, F}, {D, E}, {F, G}}, 输出 D.
+第三题: 第二题的follow up,假设每门课程可以有多门先修课,找出所有path修到一半课程的名称
+我思路是把它看成图,然后记录每个点的indegree值从而找到indegree为0的点即为起始点,之后使用拓扑排序或者dfs来找到所有的路径(routes),再对每条路径使用第二题的函数来找到所有路径的中点.
+2. Meeting room
+第一题：输入是一个int[][] meetings, int start, int end, 每个数都是时间，13：00 ->1300， 9：-> 930， 看新的meeting 能不能安排到meetings
+ex: {[1300, 1500], [930, 1200],[830, 845]}, 新的meeting[820, 830], return true; [1450, 1500] return false;
+759. Employee Free Time
+/*
+Follow up:
+We are writing a tool to help users manage their calendars. Given an unordered list of times of day when people are busy, write a function that tells us the intervals during the day when ALL of them are available.
+
+Sample input:
+
+p1_meetings = [-baidu 1point3acres
+  {"start": 1230, "end": 1300},
+  {"start":  845, "end":  900},
+  {"start": 1300, "end": 1500},
+]
+p2_meetings = [
+  {"start":  930, "end": 1200},
+  {"start": 1600, "end": 2359},
+]
+p3_meetings = [
+  {"start":  845, "end":  915},
+  {"start": 1515, "end": 1545},
+]
+schedules = [p1_meetings, p2_meetings, p3_meetings]
+
+Expected output:
+
+find_available_time(schedules). check 1point3acres for more.
+=> [    0,  845 ],
+    [  915,  930 ],
+    [ 1200, 1230 ],
+    [ 1500, 1515 ],
+    [ 1545, 1600 ]
+*/
+
+解法：
+与LC的尔雾散解法类似：两个vector，一个放所有的开始时间，一个放所有的结束时间。都进行排序。然后就会发现神奇的发现：
+{845，845，930，1230，1300，1515，1600}
+{900，915，1200，1300，1500，1545，2359}
+进行一轮遍历就能得到他们的meeting时间并集
+{
+{845,915} {930,1200} {1230,1500}{1515,1545}{1600,2359}
+}那么答案：空闲时间就是
+{
+{0,845},{915,930},{1200,1230},{1500,1515},{1545,1600}
+}
+第二题merge intervals。
+类似merge interval，唯一的区别是输出，输出空闲的时间段，merge完后，再把两两个之间的空的输出就好，注意要加上0 - 第一个的start timefile:////Users/hanshany/Library/Group%20Containers/UBF8T346G9.Office/TemporaryItems/msohtmlclip/clip_image004.png
+
+第三题是给会议分配房间。已知每个会议的人数、开始时间、结束时间，以及每个房间的容量。
+输入：
+会议列表：每个会议有名称、人数、开始时间、结束时间
+房间列表：每个房间有名称、容量。
+输出：
+每个会议安排在哪个房间，格式是“会议名:房间名”
+如果没法都安排，输出"impossible
+3. SubDomain
+第一题：subdomain：
+811. Subdomain Visit Countfile:////Users/hanshany/Library/Group%20Containers/UBF8T346G9.Office/TemporaryItems/msohtmlclip/clip_image004.png
+
+Input：
+[“900 google.mail.com",
+"50 yahoo.com",
+"1 intel.mail.com",
+"5 wiki.org"]
+Output:
+["901 mail.com",
+"50 yahoo.com",
+"900 google.mail.com",
+"5 wiki.org",
+"5 org",
+"1 intel.mail.com",
+用hashmap 先split然后再join得到所有subdomain 然后存domain + entry， 然后output
+第二题：找每两个user的 longest contiguous user history，用dp做就可以
+类似最长公共子串 只不过给的不是字符串是两个list, 找list里面公共子序列。 DP解决
+718. Maximum Length of Repeated Subarray
+给每个user访问历史记录，找出两个user之间longest continuous common history
+输入： [
+             ["3234.html", "xys.html", "7hsaa.html"], // user1
+             ["3234.html", ''sdhsfjdsh.html", "xys.html", "7hsaa.html"] // user2
+           ], user1 and user2 （指定两个user求intersect）
+输出：["xys.html", "7hsaa.html"]
+
+第三题：统计广告网站点击数目和购买数目
+{访问者ip和对应访问网站的text}
+{用户id和对应ip}
+再加上购买者的id vector
+
+返回每个网站text 所对应购买数和访问数
+每个id在对应的网站上有购物行为
+e.g.
+input
+id = [1,2,3]
+id_ip =
+[
+[1, 127.1.1.1]
+[2, 127.1.1.2]
+[3, 127.1.1.3]
+[4, 127.1.1.4]
+ip_text:
+[
+[127.1.1.1, "apple"]
+[127.1.1.2, "banana"]
+[127.1.1.3, "banana"]
+[127.1.1.4, "apple"]
+[127.1.1.4, "banana"]
+output:
+[ [1 of 2 "apple"], [2 of 3 "banana"] ]
+given 三个 list, 包括 purchasedUser(所有购买用户id), ipaddressUser(IP地址和用户对应列表), history(浏览记录, 包括IP地址, 时间 和 商品(广告)). 应该就 split 一下, 然后提取一下所有的数据, 遍历一下 history 就好.
+第三题相当于是这样
+String[] purchasedUser = ["203948535", "56856", "b86785"]
+String[] history = ["234.64.23.123,2018.10.3,item A",
+"234.457.45.123,2018.10.3,item A",
+String[] ipaddressUser = ["203948535,234.457.2345.123",
+"74545,234.457.2345.123"
+"2347,234.64.23.123"
+比如 item A 有两个点击记录, 但实际上对应的 ip 地址所对应的用户 id 只有一人最终购买, 所以输出的就是这样的形式: 1 of 2 item A
+4. 计算器
+第一问：输入string 只有加减和数字，如"1+2-3"。 用一个整数存数字前面的符号。
+第二问：第一问的基础上加括号，如"(1+2)-3"。用Stack存括号前面“真正”的符号, 遇到符号乘上stack.peek()
+第三问：第二问的基础上加上变量，给了一部分变量（字母）对应的值，化简表达式。如"(a+b)+c+d+1", 给map {"a":1,"b":2,"c":3},输出"7+d"。输出将单词替换成数字后的计算结果（注意：单词有可能会出现在括号里面）用另外一个map存没有出现的变量的出现次数，其余变量or数字直接加到结果里面。 比如{ { "abc", 1 }, { "def", 2 } }, 算式为"1-(abc+2)-def+ijk"。输出"-4+ijk"。
+
+5. 找矩阵
+第一题：Intuit 网上coding competition的一道题
+给一个矩阵，矩阵里的每个元素是1，其中有一个0组成的矩形，其余都是1，找出这个矩形的左上及右下坐标。
+Ans:遍历matrix碰到第一个0就上下左右四个方向找，得到上左下右边界后break。
+提问时空间复杂度。测试所有能想到的corner cases，就是这一步耽误了不少时间。
+https://www.geeksforgeeks.org/find-rectangles-filled-0/
+example：
+input:
+[
+[1,1,1,1,1,1],
+[0,0,1,0,1,1],
+[0,0,1,0,1,0],
+[1,1,1,0,1,0],
+[1,0,0,1,1,1]
+output:
+[
+[1,0,2,1],
+[1,3,3,3],
+[2,5,3,5],
+[4,1,4,2]
+第二题：如果 Matrix 中有多个由0组成的长方体，请返回多套值（前提每两个长方体之间是不会连接的，所以放心）. 不改变输入的做法
+matrix中不止一个0矩阵，找出所有矩阵的上左下右坐标并返回。
+Ans：
+(1) DFS: 想法是用boolean[][] color来对矩阵元素进行标记，dfs找到未被标记0元素的所有邻接0，然后color设为true，避免重复查找。
+(2) Step 1: Look for the 0 row-wise and column-wise
+Step 2: When you encounter any 0, save its position in output array and using loop change all related 0 with this position in any common number so that we can exclude it from processing next time.
+Step 3: When you change all related 0 in Step 2, store last processed 0’s location in output array in the same index.
+Step 4: Take Special care when you touch the edge, by not subtracting -1 because the loop has broken on the exact location.
+Step 1: Look for the 0 row-wise and column-wise
+Step 2: When you encounter any 0, save its position in output array and using loop change all related 0 with this position in any common number so that we can exclude it from processing next time.
+Step 3: When you change all related 0 in Step 2, store last processed 0’s location in output array in the same index.
+Step 4: Take Special care when you touch the edge, by not subtracting -1 because the loop has broken on the exact location.      
+第三题：connected components
+只不过是返回一个list of list，每个list是一个component的所有点坐标
+那个图是1,01,0组成的矩阵，0组成的就是各种图形。跟前面关系的确不大
+如果矩阵里有多个不规则的形状，返回这些形状。这里需要自己思考并定义何谓“返回这些形状”
+6. Server
+题目如下：给一个text format的file包含了server的ID和其他信息，ID是放在方括号里。比如[foo]和[bar:foo]。第二个例子里bar会继承foo的一些属性，bar自己带新的属性或者可以override foo的属性。题目要求是写一个function parse这个file然后用要求的format输出。给的代码里input是个List<String>。input是严格遵循给的例子的format没有提行。除了等号两边有空格外其他不会有空格出现。可能会出现多重继承的关系。
+The output should be in sorted order - both sections and the keys within them should be sorted.
+输入：
+[base_server]
+ram = 16G
+disk = 15G
+[review_console:admin_console]
+[admin_conle:base_server]
+ram = 32g
+owner = root
+输出：
+[admin_console]
+disk = 16G
+owner = root
+ram = 32G
+[base_server]
+disk = 16G
+ram = 16G
+[review_console]
+disk = 16G
+owner = root
+ram = 32G
+从其他几个testcase里看到还有envname这个属性。第一反应是用regular expression去处理字符串然后用map去存，还自定义了一个新的类。然而后面发现我想的太简单。我自己的代码太菜了，希望有大神能给点hint这道题怎么写比较好。
+7. 公共祖先 OA题
+题意是：假设我们有一个graph，input data是parent child的形式，格式是一个(parent, child) pairs的list，每一个节点都有一个unique integer identifier
+比如：
+1   2   4
+  \ /   / \
+   3   5   8
+    \ / \   \
+     6   7   9
+input就是int[][] parentChildPairs = new int[][] { {1, 3}, {2, 3}, {3, 6}, {5, 6}, {5, 7}, {4, 5}, {4, 8}, {8, 9}};
+第一问：求两个list，一个list是没有任何parent的list，另一个是只有一个parent的list
+比如这个图的结果就是[[1, 2, 4], [5, 8, 7, 9]] （我是用List<List<Integer>>表示的）。
+第二问：给两个node接点，返回是否有公告祖先
+parentChildPairs, 3, 8 => false
+parentChildPairs, 5, 8 => true
+parentChildPairs, 6, 8 => true
+第三问：两个人的最远公共祖先
+8. Adjacency Lists
+Suppose you are creating an internal networking site for your company.
+You have two data sets to work with. The first data set is the employees at your company, and the second is all the pairs of employees who are virtually friends so far. It does not matter which employee’s ID is in which column, the friendships are bidirectional. To get started, you need to parse and represent each data set in its entirety in code.
+Furthermore, you also need to implement a function that, given the employees and friendships as parameters, returns this data in the form of an adjacency list representation. This is a mapping of each employee ID to a list of his/her friends on the site.
+第一题：输出所有的employee的friend list
+Ans: 就是用一个map存起来然后打印就好了（这个是无向图，e.g: 1和2是朋友，2列表里也要有1）
+第二题：输出每个department的员工数以及这里有多少人的朋友是其他部门的
+Ans: 也就是遍历一遍就好了
+第三题：输出是否所有employee都在一个社交圈 -> 我当时想的就是随便找一个点，用DFS遍历一遍，如果所有点都被遍历到就return true，不然就是false
+firendship里面的string是这样的“1， 2”表示1 和2是朋友.
+输出是Map<String, Estatus>
+key是部门名字，Estatus是已经定义好的一个object包含两个int， 第一个是这个部门的人数，第二个是这个部门的人中和外部门的人是朋友的人数
+时间空间复杂度。图的问题，第二问时间复杂度是O(E+V).
+Example Input - list<String> employee 和一个list<String> friendship
+employees.csv:
+employee_id, name, department
+1, Richard, Engineering
+2, Erlich, HR
+3, Monica, Business
+4, Dinesh, Engineering
+6, Carla, Engineering
+friendships.csv:
+id_1, id_2
+1, 2
+1, 3
+2, 4
+Expected Output
+1: 2, 3
+2: 1, 4
+3: 1
+4: 2
+6: None
+9. OA类似题
+//We are working on a security system for a badged-access room in our company's building.
+//Given an ordered list of employees who used their badge to enter or exit the room, write a function that returns two collections:
+//1. All employees who didn't use their badge while exiting the room – they recorded an enter without a matching exit.
+//2. All employees who didn't use their badge while entering the room  – they recorded an exit without a matching enter.
+//badge_records = [
+//["Martha",   "exit"],
+//["Paul",     "enter"],
+//["Martha",   "enter"],
+//["Martha",   "exit"],
+//["Jennifer", "enter"],
+//["Paul",     "enter"],
+//["Curtis",   "enter"],
+//["Paul",     "exit"],
+//["Martha",   "enter"],
+//["Martha",   "exit"],
+//["Jennifer", "exit"],
+//find_mismatched_entries(badge_records)
+//Expected output: ["Paul", "Curtis"], ["Martha"]
+10. Workflow Level
+Introduction
+We have some input that describes the steps of a workflow. The input consists of pairs of steps, each one indicating that one step must be completed before another. For example, in sample input 1, “clean” must occur before “build” and “build” must occur before “link”. The input can occur in any order.
+We want to write a function to separate a given workflow’s steps into multiple stages in such a way that all the steps in each individual stage can run at the same time. The function should return a list of lists, in which each list represents one stage. Each step should run in the earliest possible stage.
+Sample input 1:
+precursor_steps = [
+  ["clean", "build"],
+  ["metadata", "binary"],
+  ["build", "link"],
+  ["link", "binary"],
+  ["clean", "metadata"],
+  ["build", "resources"]
+Sample output 1:
+[
+  ["clean"],
+  ["build", "metadata"],
+  ["resources", "link"],
+  ["binary"]
+Sample input 2:
+precursor_steps = [
+  ["boil", "serve"],
+  ["chop", "boil"],
+  ["stir", "boil"],
+  ["set table", "serve"]
+Sample output 2:
+[
+  ["chop", "stir", "set table"],
+  ["boil"],
+  ["serve"]
+Clarifications
+* The lists in your output should be in precedence order.
+* The steps within a given list in your output can be in any order (i.e. [“chop”, “stir”] and [“stir”, “chop”] are equivalent for our purposes).
+* Assume all inputs are always sanitized (input can be empty but will not be null, no null/empty/otherwise invalid steps, no circular references, etc.).
