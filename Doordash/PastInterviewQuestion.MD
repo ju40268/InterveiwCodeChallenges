@@ -295,6 +295,42 @@ p2 p1 d2 d1
 p2 d2 p1 d1
 总之就是要对于每一个物品, pick up 一定要在 deliver之前. 具体哪个物体先哪个后无所有.
 我记得n = 4有84种, n = 5有2520种
+
+def possile(l, all_possile):
+    rest = list(set(all_possile) - set(l))
+    tmp = []
+    for r in rest:
+        if 'p' in r:
+            tmp.append(l+[r])
+        if 'd' in r:
+            idx = r[1]
+            pick = 'p' + idx
+            if pick not in rest:
+                tmp.append(l+[r])
+    return tmp
+
+
+def interview(n):
+    all_possile = []
+    for i in range(1, n+1):
+        all_possile.append("p{}".format(str(i)))
+        all_possile.append("d{}".format(str(i)))
+
+    q = []
+    for i in range(1, n+1):
+        q.append(["p{}".format(str(i))])
+    res = []
+    while q:
+        l = q.pop(0)
+        if len(l) == 2*n:
+            res.append(l)
+        else:
+            q.extend(possile(l, all_possile))
+    print(res)
+    print(len(res))
+    
+if __name__ == '__main__':
+    interview(2)
 ```
 
 + 系统设计 聊天系统 要求实现1v1 聊天功能和群聊功能 设计schema 呀 存贮呀 pull/push等讨论
@@ -365,8 +401,8 @@ Return an array with sorted integers.
 3. dependence & connect4
 system design 也是简单的payment design 表单，提交transaction 支付 记录user order payment
 
-+ 一轮拓扑排序，类似刷题网站的那道课程规划II。一轮和地里那份11月的面筋一样，花了太多时间在讨论处理input case上，打印路径时候写不完了。。接下来有面的同学注意一下吧，提前想一些test case。
-+ 2hours电面：1. 从起点走到终点给K个steps， 问有多少种distinct paths，可上下左右对角 2. 最大岛屿问题，不是1， 0. 而是任意数 (LC numbers of island but not just 0 and 1. it could be from 0 - 9, 求最大岛屿面积, 
++ 从起点走到终点给K个steps， 问有多少种distinct paths，可上下左右对角
++ 最大岛屿问题，不是1， 0. 而是任意数 (LC numbers of island but not just 0 and 1. it could be from 0 - 9, 求最大岛屿面积, 
 所有的都是岛，相同的数group在一起算一个岛)
 + 第一轮是一个韩国妹子，题目地里之前也有人发过。。。我再说详细一点吧。
 是一个ood design的题，是一个游戏叫做connect 4，google一下游戏规则就出来了。
@@ -455,3 +491,274 @@ ex: 3, 5, 6, 7, 12 -> 5, 6, 7
 
 
 # Leetcode Tags
++ Stock Buy & Sell
+```
+class Solution {
+    public int maxProfit(int[] prices) {
+        if (prices == null || prices.length == 0) return 0;
+        int globalMin = prices[0];
+        int res = Integer.MIN_VALUE;
+        for (int i = 0; i < prices.length; i++) {
+            globalMin = Math.min(globalMin, prices[i]);
+            res = Math.max(res, prices[i] - globalMin);
+        }
+        return res;
+    }
+}
+```
++ Num of Islands
+
+DFS
+```
+class Solution {
+    public static int numIslands(char[][] grid) {
+        int res = 0;
+        int m = grid.length;
+        if (m == 0) return 0;
+        int n = grid[0].length;
+        for (int i = 0; i < m; i++){
+            for (int j = 0; j < n; j++){
+                if (grid[i][j] == '1') {
+                    dfs(grid, i, j, m, n);
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+
+    private static void dfs(char[][] grid, int i, int j, int m, int n) {
+        if ( i < 0 || j < 0 || i >= m || j >= n || grid[i][j] == '0') return;
+        grid[i][j] = '0';
+        dfs(grid, i+1, j, m, n);
+        dfs(grid, i-1, j, m, n);
+        dfs(grid, i, j+1, m, n);
+        dfs(grid, i, j-1, m, n);
+    }
+}
+```
+
+BFS 
+```
+class Solution {
+    public int numIslands(char[][] grid) {
+        int result = 0;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == '1') {
+                    bfs(grid, i, j);
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+    public void bfs(char[][] grid, int x, int y) {
+        grid[x][y]='0';
+        int n = grid.length;
+        int m = grid[0].length;
+        LinkedList<Integer> queue = new LinkedList<Integer>();  
+        int code = x * m + y;  
+        queue.offer(code);  
+        while(!queue.isEmpty()) {  
+            code = queue.poll();  
+            int i = code / m;  
+            int j = code % m;  
+            System.out.println("i & j :" + i + ", " + j);
+            if(i > 0 && grid[i-1][j]=='1') {  
+                queue.offer((i-1)*m+j);  
+                grid[i-1][j]='0';  
+            }  
+            if(i < n-1 && grid[i+1][j]=='1'){  
+                queue.offer((i+1)*m+j);  
+                grid[i+1][j]='0';  
+            }  
+            if(j > 0 && grid[i][j-1] == '1') {  
+                queue.offer(i*m+j-1);  
+                grid[i][j-1]='0';  
+            }  
+            if(j < m-1 && grid[i][j+1] == '1') {  
+                queue.offer(i*m+j+1);  
+                grid[i][j+1]='0';  
+            } 
+        }
+    }
+}
+```
++ Course Schedlue II 
+```
+public int[] findOrder(int numCourses, int[][] prerequisites) { 
+    if (numCourses == 0) return null;
+    // Convert graph presentation from edges to indegree of adjacent list.
+    int indegree[] = new int[numCourses], order[] = new int[numCourses], index = 0;
+    for (int i = 0; i < prerequisites.length; i++) // Indegree - how many prerequisites are needed.
+        indegree[prerequisites[i][0]]++;    
+
+    Queue<Integer> queue = new LinkedList<Integer>();
+    for (int i = 0; i < numCourses; i++) 
+        if (indegree[i] == 0) {
+            // Add the course to the order because it has no prerequisites.
+            order[index++] = i;
+            queue.offer(i);
+        }
+
+    // How many courses don't need prerequisites. 
+    while (!queue.isEmpty()) {
+        int prerequisite = queue.poll(); // Already finished this prerequisite course.
+        for (int i = 0; i < prerequisites.length; i++)  {
+            if (prerequisites[i][1] == prerequisite) {
+                indegree[prerequisites[i][0]]--; 
+                if (indegree[prerequisites[i][0]] == 0) {
+                    // If indegree is zero, then add the course to the order.
+                    order[index++] = prerequisites[i][0];
+                    queue.offer(prerequisites[i][0]);
+                }
+            } 
+        }
+    }
+
+    return (index == numCourses) ? order : new int[0];
+}
+```
+
++ Basic Calculator 
+```
+class Solution {
+       public int calculate(String s) {
+        int len;
+        if(s==null || (len = s.length())==0) return 0;
+        Stack<Integer> stack = new Stack<Integer>();
+        int num = 0;
+        char sign = '+';
+        for(int i=0;i<len;i++){
+            if(Character.isDigit(s.charAt(i))){
+                num = num*10+s.charAt(i)-'0';
+            }
+            if((!Character.isDigit(s.charAt(i)) &&' '!=s.charAt(i)) || i==len-1){
+                if(sign=='-'){
+                    stack.push(-num);
+                }
+                if(sign=='+'){
+                    stack.push(num);
+                }
+                if(sign=='*'){
+                    stack.push(stack.pop()*num);
+                }
+                if(sign=='/'){
+                    stack.push(stack.pop()/num);
+                }
+                sign = s.charAt(i);
+                num = 0;
+            }
+        }
+
+        int re = 0;
+        for(int i:stack){
+            re += i;
+        }
+        return re;
+    }
+}
+```
+
++ Max area of island
+```
+private int[][] directions = {{1, 0},{-1, 0},{0, 1},{0, -1}};
+public int maxAreaOfIsland(int[][] grid) {
+    if(grid == null || grid.length == 0 || grid[0].length == 0){
+        return 0;
+    }
+    int max = 0;
+    boolean[][] visited = new boolean[grid.length][grid[0].length];
+    for(int i = 0; i < grid.length; i++){
+        for(int j = 0; j < grid[0].length; j++){
+            if(grid[i][j] == 1 && !visited[i][j]){
+                max = Math.max(max, dfs(grid, i, j, visited));
+            } 
+        }
+    }
+    return max;
+}
+private int dfs(int[][] grid, int x, int y, boolean[][] visited){
+    if(x < 0 || x >= grid.length || y < 0 || y >= grid[0].length || visited[x][y] || grid[x][y] != 1){
+        return 0;
+    }
+    int res = 1;
+    visited[x][y] = true;
+    for(int[] dir : directions){
+        int newX = x + dir[0];
+        int newY = y + dir[1];
+        res += dfs(grid, newX, newY, visited);
+    }
+    return res;
+}
+```
++ Random Pick with Weight
+idea : 
+
+Use accumulated freq array to get idx.
+w[] = {2,5,3,4} => wsum[] = {2,7,10,14}
+then get random val random.nextInt(14)+1, idx is in range [1,14]
+
+idx in [1,2] return 0
+idx in [3,7] return 1
+idx in [8,10] return 2
+idx in [11,14] return 3
+
+```
+class Solution {
+
+    Random random;
+    int[] wSums;
+    
+    public Solution(int[] w) {
+        this.random = new Random();
+        for(int i=1; i<w.length; ++i)
+            w[i] += w[i-1];
+        this.wSums = w;
+    }
+    
+    public int pickIndex() {
+        int len = wSums.length;
+        int idx = random.nextInt(wSums[len-1]) + 1;
+        int left = 0, right = len - 1;
+        // search position 
+        while(left < right){
+            int mid = left + (right-left)/2;
+            if(wSums[mid] == idx)
+                return mid;
+            else if(wSums[mid] < idx)
+                left = mid + 1;
+            else
+                right = mid;
+        }
+        return left;
+    }
+}
+```
+
++ Interval List intersections
+```
+class Solution {
+    public Interval[] intervalIntersection(Interval[] A, Interval[] B) {
+        List<Interval> resList = new ArrayList<>();
+        int i = 0, j = 0;
+        while (i < A.length && j < B.length) { 
+            Interval curA = A[i];
+            Interval curB = B[j];
+            int start = Math.max(curA.start, curB.start);
+            int end = Math.min(curA.end, curB.end);
+            if (end >= start) { // overlap !
+                resList.add(new Interval(start, end));
+            }
+            if (end == curA.end) i++;
+            if (end == curB.end) j++;
+        }
+        Interval[] res = new Interval[resList.size()];
+        for (int k = 0; k < resList.size(); k++) {
+            res[k] = resList.get(k);
+        }
+        return res;
+    }
+}
+```
