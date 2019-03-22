@@ -94,12 +94,39 @@ Binary Tee pre/in/post/level
 N-nary Tree pre/post/level
 之后问了一个设计题, 问假设爬虫了很多html网页, 如何找出所有电话号码. 很open的题目. 比如如果pre处理,如何extract 电话号码,如何存储结果.
 
+        from collections import deque
+        class Solution(object):
+            def levelOrder(self, root):
+                """
+                :type root: Node
+                :rtype: List[List[int]]
+                """
+                if not root: return []
+                res = []
+                q = [root]
+                
+                while q:
+                    level = []
+                    for i in range(len(q)):
+                        node = q.pop(0)
+                        level.append(node.val)
+                        if node and node.children:
+                            for n in node.children:
+                                q.append(n)
+                    res.append(level)
+                    
+                return res
+        
+
 + 吆泤邻
 + 两小时开会软件背靠背,一个烙印一个韩国小姐姐, 都是工作两年的, 第一个题, connect4, 没有让重写, 而是让优化代码, 着重写了行列处理, 判断是否valid的几个function, 时间比较赶. 韩国小姐姐来了一个lc42 雨水堆积的问题, 和一道follow up, 基本上42会做就能做出来, 这个时间相对宽松,最后十分钟聊了一下组里做什么的, 没有BQ, 一开始简单介绍了自己的背景就直接上代码了
 + Connect4
     + HashMap : key是p, value是d, 出错情况，有p无d，d比p早，p重复出现等
     + 面我的是一个韩国小姐姐，很可爱很和蔼，题目没有之前面经里的复杂，不用简化行和列的输入，主要完成判断输赢的方法，但是会先贴进来一堆已有的代码，然后把空缺的地方进行填补。也没什么诀窍，重在沟通吧。有面经的题目应该不存在完全不会的，所以就看怎么样能和面试官讲的清楚聊的开心。然后也要注重体现逻辑和思考能力，因为是ood的题目，需要分析和探讨的也比较多，要让面试官觉得你是一个有编程逻辑且思考全面的人。
-    + 着重写了行列处理, 判断是否valid的几个function, connect4这道题, 我自己也实现了一下, 结果面试的时候发现并没有什么卵用, 可以帮你梳理一下思路, 但是他会一上来给你一个三百行的代码, 写的还特别的乱, 都是strong coupling的代码, 很多class, 让你修改部分代码来完成他要求的某个功能, 比如他一开始的输入是行和列, 然后需要你把它改成只输入列就能工作的. 整个代码都比较乱,用了不少奇怪的变量名和打印方式.  他的代码直接就能运行, 没有让额外写逻辑, 而是就他现有的逻辑来改, 所以快速理清这几百行代码就比较重要了.  
+    + 着重写了行列处理, 判断是否valid的几个function, connect4这道题, 我自己也实现了一下, 结果面试的时候发现并没有什么卵用, 可以帮你梳理一下思路, 但是他会一上来给你一个三百行的代码, 写的还特别的乱, 都是strong coupling的代码, 很多class, 让你修改部分代码来完成他要求的某个功能, 比如他一开始的输入是行和列, 然后需要你把它改成只输入列就能工作的. 整个代码都比较乱,用了不少奇怪的变量名和打印方式.  他的代码直接就能运行, 没有让额外写逻辑, 而是就他现有的逻辑来改, 所以快速理清这几百行代码就比较重要了. 
+    + 第一个是 把input改成只需要输入列数（因为connect4的棋子是会掉下去的嘛，所以行数可以求出来）
+    第二个是 把 checkwinner完成了
+    第三个是 增加一个可以跟AI对战的feature，AI随便弄，我就直接弄了个最蠢的随机下子的AI。然后没时间了 
     + 是一个ood design的题，是一个游戏叫做connect 4，google一下游戏规则就出来了。
     题目框架她已经给你写好了，只需要填一些函数。。我感觉难点主要在于，读懂整个框架。。一下子刷刷给你好几个class，要弄懂各个class之间的关系，还是有些心累的。。最难的一个函数就是checkwin，建议大家先事先写一写这个函数。横竖检查的时候都很简单，两个斜线的检查写起来还是略麻烦的。。。总之我写的磕磕绊绊，最后在规定时间内勉强写完，还没来得及debug，就到时间了。。
     + 从input row, col, 改成只需要input col, 自动补全没有填满的row
@@ -144,8 +171,47 @@ N-nary Tree pre/post/level
         return False
         ``` 
 
-+ 离口柳揪，follow up 是给k 找k decimal points 的解。
++ Leetcode 69，follow up 是给k 找k decimal points 的解。
+```
+class Solution(object):
+    def mySqrt(self, x):
+        """
+        :type x: int
+        :rtype: int
+        """
+        l, r = 0, x + 1
+        while l < r:
+            m = (r - l) // 2 + l
+            if m * m > x:
+                r = m
+            else:
+                l = m + 1
+        return l - 1
+```
+With Decimal
+```
+public double sqrt(double x) {
+        double l = 0;
+        double r = Math.max(x, 1.0);
+        double eps = 1e-12;
+        
+        while (l + eps < r) {
+            double mid = l + (r - l) / 2;
+            if (mid * mid < x) {
+                l = mid;
+            } else {
+                r = mid;
+            }
+        }
+        
+        return l;
+    }
+```
 + Dependency Solver
+题目是问, 要安装library列表里面的所有library. 然后这些library对应的依赖关系在dependency列表里. 箭头前的依赖箭头后的(可能依赖多个)
+这些依赖可能还存在更深的依赖关系. 必须装了对应的依赖才能装对应的library. 无关的依赖的安装顺序没有要求. 但是要按顺序装library里面的.
+所以, 以上述输入为例.
+一来先装z, 发现z无依赖, 直接安装. 然后安装a, 发现a依赖于b和d, 因此要先安装b和d. 但是发现b和d又各有依赖, 因此去安装对应的依赖
 ```
 dependency resolver
 
@@ -169,61 +235,87 @@ dependencies = [
 
 (possible) output:
 ['z', 'g', 'f', 'c', 'b', 'e', 'd', 'a']
+
+
+import sys, os
+import json, collections
+
+def build_graph(dependencies): 
+    graph, degree = {}, {}
+    all_libraries = set()
+    for l in libraries:
+        all_libraries.add(l)
+    for d in dependencies:
+        cur = (d.split("->"))[0]
+        prev = (d.split("->"))[1]
+        all_libraries.add(cur)
+        for p in prev.split(","):
+            all_libraries.add(p)
+            graph[p] = graph.get(p, []) + [cur]
+            degree[cur] = degree.get(cur, 0) + 1
+    
+    for l in all_libraries:
+        print(l)
+        if l not in degree:
+            degree[l] = 0
+    return graph, degree
+
+def topological_sort(graph, degree):
+    queue = collections.deque()
+    for course_name, indegree in degree.items():
+        if indegree == 0: 
+            queue.append(course_name)
+    result = []
+    while queue:
+        cur = queue.popleft()
+        result.append(cur)
+        if cur in graph:
+            for neighber in graph[cur]:
+                degree[neighber] -= 1
+                if degree[neighber] == 0:
+                    queue.append(neighber)
+    for course_name, indegree in degree.items():
+        if indegree != 0:
+            return []
+    return result
+
+
 ```
-explanation:
-题目是问, 要安装library列表里面的所有library. 然后这些library对应的依赖关系在dependency列表里. 箭头前的依赖箭头后的(可能依赖多个)
-这些依赖可能还存在更深的依赖关系. 必须装了对应的依赖才能装对应的library. 无关的依赖的安装顺序没有要求. 但是要按顺序装library里面的.
-所以, 以上述输入为例.
-一来先装z, 发现z无依赖, 直接安装. 然后安装a, 发现a依赖于b和d, 因此要先安装b和d. 但是发现b和d又各有依赖, 因此去安装对应的依赖
+
 
 + 那个给出数字1,2,3,4,5之类的面筋题, 问一共有多少种合理的pick up 和 deliver的序列的题目, 要求用[迭代]的方式做, 不要递归的解法. 
-    + n = 1, only 1 possible, p1 d1
-    n = 2,  6 possible 
-    p1 d1 p2 d2
-    p1 p2 d1 d2
-    p1 p2 d2 d1
-    p2 p1 d1 d2
-    p2 p1 d2 d1
-    p2 d2 p1 d1
-    . From 1point 3acres bbs
-    总之就是要对于每一个物品, pick up 一定要在 deliver之前. 具体哪个物体先哪个后无所有.
-    我记得n = 4有84种, n = 5有2520种. 
-+ 1. 问了一个dependencies resolver的问题 就是有很多libs 中间有不同的dependncies 问应该按什么顺序加载
+```
+n = 1, only 1 possible, p1 d1
+n = 2,  6 possible 
+p1 d1 p2 d2
+p1 p2 d1 d2
+p1 p2 d2 d1
+p2 p1 d1 d2
+p2 p1 d2 d1
+p2 d2 p1 d1
+总之就是要对于每一个物品, pick up 一定要在 deliver之前. 具体哪个物体先哪个后无所有.
+我记得n = 4有84种, n = 5有2520种
+```
 
-+ 2. 系统设计 聊天系统 要求实现1v1 聊天功能和群聊功能 设计schema 呀 存贮呀 pull/push等讨论
++ 系统设计 聊天系统 要求实现1v1 聊天功能和群聊功能 设计schema 呀 存贮呀 pull/push等讨论
 
-+ 3. 这一轮我也不知道面了个啥 被一个比较senior的人带到公司顶楼的天台山晒太阳 聊了些有的没得 past projects 大概介绍了一下他们现在的python monolith application  如果要重新设计 要怎么做 
-然后一顿安利 说他们增长多牛逼 他以前在lyft 然后跳过来 他们今年预计要double team size
-
-+ 4. behavior 面试 各种behavior 问题 
-
-+ 5. 是一个游戏的问题 叫connect4 美国人好像都知道， 可以去搜一下怎么玩。这道题是一个在笔记本上写代码的题，很多已经实现好了 要求实现其中的怎么判断游戏有没有结束的一个function。然后是添加一个robot功能，这样player和robot对局，然后要给这个robot设计strategy，不能让他太傻。感觉重点不是策略的算法 而是整个的设计 怎么设计借口 类 考虑到可以继续扩展的 很有意思的一个题目
++ 是一个游戏的问题 叫connect4 美国人好像都知道， 可以去搜一下怎么玩。这道题是一个在笔记本上写代码的题，很多已经实现好了 要求实现其中的怎么判断游戏有没有结束的一个function。然后是添加一个robot功能，这样player和robot对局，然后要给这个robot设计strategy，不能让他太傻。感觉重点不是策略的算法 而是整个的设计 怎么设计借口 类 考虑到可以继续扩展的 很有意思的一个题目
 
 + Connect 4 with edge cases.
-Pick up and delivery valid and permutation.
++ Pick up and delivery valid and permutation.
+```
 P1 D1-Valid
 P1 P2 D2 D1- Valid
 P1 D1 P1 D1- invalid
 P1-invalid...等等等等
 再就是给你N个id，让你output所有可能permutation，注意了不能用recursion。。。他说完题我leetcode里backtracking就跳出来了，结果不能用。。。。。。。。
-然后勉强做完了，又来了个followup，topological sort时间太紧没做完、。、
-
-+ 第1轮coding还不是很传统的算法面试。
-题目是给了一堆已经成型的code，内容是connect4这么个游戏。
-然后让你增加新的feature。做完一个就提一个新的feature加上去。
-我做了3个
-第一个是 把input改成只需要输入列数（因为connect4的棋子是会掉下去的嘛，所以行数可以求出来）
-第二个是 把 checkwinner完成了
-第三个是 增加一个可以跟AI对战的feature，AI随便弄，我就直接弄了个最蠢的随机下子的AI。然后没时间了
-
-+ 第2轮coding是算法
-dependency graph然后print出来假如要compile A，所有其他文件要compile的顺序。
-可以用拓扑，或者直接用DFS我觉得也行. From 1point 3acres bbs
+然后勉强做完了，又来了个followup，topological sort时间太紧没做完
+```
 
 + 系统设计是设计一个donation系统。
 比如要搞个3天的charity活动，user可以进行donation。如何实现charge 钱， email 收据，最后summary 这几个功能。
 
-+ 编程 只是个 排序，瞬秒
++ 排序
 + 然后是 设计 推特数据库，设计完顺便叫你搜索一下
 当前用户 和 所有 他 粉了的用户的帖子
 也是经典题
