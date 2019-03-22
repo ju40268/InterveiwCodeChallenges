@@ -762,3 +762,132 @@ class Solution {
     }
 }
 ```
+
++ Design Twitter
+```
+class Twitter {
+    class Tweet {
+        int time;
+        int tweetId;
+        public Tweet(int time, int id) {
+            this.time = time;
+            this.tweetId = id;
+        }
+    }
+    
+    Map<Integer, Set<Integer>> userToUser;
+    Map<Integer, List<Tweet>> userToTweet;
+    int globalTime = 0;
+    /** Initialize your data structure here. */
+    public Twitter() {
+        userToUser = new HashMap<>();
+        userToTweet = new HashMap<>();
+    }
+    
+    /** Compose a new tweet. */
+    public void postTweet(int userId, int tweetId) {
+        if (!userToTweet.containsKey(userId)) {
+            userToTweet.put(userId, new ArrayList<>());
+        }
+        if (!userToUser.containsKey(userId)) {
+            userToUser.put(userId, new HashSet<>());
+        }
+        Tweet t = new Tweet(globalTime++, tweetId);
+        userToTweet.get(userId).add(t);
+        userToUser.get(userId).add(userId);
+    }
+    
+    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+    public List<Integer> getNewsFeed(int userId) {
+        // // max-heap by tweet post time
+        PriorityQueue<Tweet> pq = new PriorityQueue<>((a, b) -> b.time - a.time);
+        Set<Integer> allFollowee;
+        if (!userToUser.containsKey(userId)) allFollowee = new HashSet<>();
+        else allFollowee = userToUser.get(userId);
+        for (Integer e : allFollowee) {
+            if (!userToTweet.containsKey(e)) continue;
+            for (Tweet t : userToTweet.get(e)) {
+                pq.offer(t);
+            }
+        }        
+        int k = 10;
+        List<Integer> result = new ArrayList<>();
+        while (!pq.isEmpty() && (k--) > 0)
+            result.add(pq.poll().tweetId);
+        return result;
+    }
+    
+    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+    public void follow(int followerId, int followeeId) {
+        if (!userToUser.containsKey(followerId)) {
+            userToUser.put(followerId, new HashSet<>());
+        }
+        userToUser.get(followerId).add(followeeId);   
+    }
+    
+    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+    public void unfollow(int followerId, int followeeId) {
+        if(!userToUser.containsKey(followerId) || followerId == followeeId) return; 
+        userToUser.get(followerId).remove(followeeId);
+    }
+}
+
+```
+
++ Unique Path
+```
+class Solution {
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
+        for(int i = 0; i < m; i++) dp[i][0] = 1;
+        for(int j = 0; j < n; j++) dp[0][j] = 1;
+        for(int i = 1;i < m; i++){
+            for(int j = 1; j < n; j++){
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            }
+        }
+        return dp[m-1][n-1];
+    }
+}
+```
+
++ Unique Path II  - With Obstacles
+```
+/**
+     * obstacleGrid =  0,0,0
+     *                 0,1,0
+     *                 0,0,0
+     *    index of dp 0,1,2,3
+     *   first time   0,1,1,1
+     *   sec   time   0,1,0,1
+     *   third time   0,1,1,2
+     *
+     *   ******************
+     * obstacleGrid =  0,0,0
+     *                 0,0,0
+     *                 0,0,0
+     *    index of dp 0,1,2,3
+     *   first time   0,1,1,1
+     *   sec   time   0,1,2,3
+     *   third time   0,1,3,6
+     *
+     * @param obstacleGrid
+     * @return
+     */
+    public int uniquePathsWithObstacles2(int[][] obstacleGrid) {
+        int m = obstacleGrid.length;
+        int n = obstacleGrid[0].length;
+        int[] dp = new int[n + 1];
+        dp[1] = 1;
+        for (int i = 0; i < m ; i++) {
+            for (int j = 1; j <=n; j++) {
+                if(obstacleGrid[i][j-1] == 1){
+                    dp[j] = 0;
+                }else {
+                    dp[j] += dp[j -1];
+                }
+            }
+        }
+        return dp[n];
+    }
+```
